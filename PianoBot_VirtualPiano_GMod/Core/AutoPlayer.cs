@@ -32,10 +32,10 @@ namespace PianoBot_VirtualPiano_GMod.Core
         #region Field and property declarations
 
         //This can be accessed to get the version text
-        public static string Version => "Version: 2.2c";
+        public static string Version => "Version: 1.0";
 
         //This will be used to define compatibility of save files between versions
-        private static List<string> SupportedVersionsSave { get; } = new() {"Version: 2.1", "Version: 2.2a", "Version: 2.2b", "Version: 2.2c"};
+        private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0"};
 
 
         public static bool Pause { get; set; } = false;
