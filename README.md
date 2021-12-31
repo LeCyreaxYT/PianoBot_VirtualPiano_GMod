@@ -2,14 +2,14 @@
 
 Das System wurde von mit Jeglich umgebaut und wird von mir weiter Supported. Jegliche Pull Request oder so sind erlaubt sowie Verbesserungen sowie Vorschläge sind erlaubt. 
 
-Der erste Ersteller vom PianoBot war *OfficialHisha* auf diesen GitHub Repo *https://github.com/OfficialHisha/Tower-Unite-Piano-Bot*
+Der erste Ersteller vom PianoBot war **OfficialHisha** auf diesen GitHub Repo **https://github.com/OfficialHisha/Tower-Unite-Piano-Bot**
 
 # Wie nutzt man es richtig
 1. Nach schauen welche aktuellen Bugs bekannt sind
-2. Copy & Paste dein Text von *https://virtualpiano.net/* als Beispiel in die TextBox
+2. Copy & Paste dein Text von **https://virtualpiano.net/** als Beispiel in die TextBox
 3. Bitte Überprüfe ob du auch den Richtigen Format nutzt wie das Problem Vorgesehen wurde.
 4. Nun kannste dich Ingame oder auf VirtualPiano.net ein Song aussuchen und darüber Spielen
-5. Nun Klicke auf *Play* oder drücke *F2*
+5. Nun Klicke auf **Play** oder drücke **F2**
 
 Ein Beispiel wie es aussehen muss:
 
