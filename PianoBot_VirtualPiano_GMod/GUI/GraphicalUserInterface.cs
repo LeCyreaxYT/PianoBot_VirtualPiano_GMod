@@ -256,7 +256,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 //Update the current notes to with the new rules
                 MakeSong();
             }
-            catch (AutoplayerCustomDelayException error)
+            catch (AutoPlayerCustomDelayException error)
             {
                 MessageBox.Show(error.Message);
             }
@@ -277,7 +277,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 //Update the current notes wtih the new rules
                 MakeSong();
             }
-            catch (AutoplayerCustomDelayException error)
+            catch (AutoPlayerCustomDelayException error)
             {
                 MessageBox.Show(error.Message);
             }
@@ -353,7 +353,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 //Update the current notes to with the new rules
                 MakeSong();
             }
-            catch (AutoplayerCustomNoteException error)
+            catch (AutoPlayerCustomNoteException error)
             {
                 MessageBox.Show(error.Message);
             }
@@ -396,7 +396,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 //Update the current notes wtih the new rules
                 MakeSong();
             }
-            catch (AutoplayerCustomNoteException error)
+            catch (AutoPlayerCustomNoteException error)
             {
                 MessageBox.Show(error.Message);
             }

@@ -14,7 +14,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool PostMessage(IntPtr hWnd, int Msg, Keys wParam, IntPtr lParam);
+        public static extern bool PostMessage(IntPtr hWnd, int msg, Keys wParam, IntPtr lParam);
 
         [DllImport("User32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, string lParam);

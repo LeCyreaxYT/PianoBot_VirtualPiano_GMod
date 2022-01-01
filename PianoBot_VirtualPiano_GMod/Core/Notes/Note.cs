@@ -5,12 +5,6 @@ using WindowsInput.Native;
 
 namespace PianoBot_VirtualPiano_GMod.Core.Notes
 {
-    /// <summary>
-    /// This class defines a Note
-    /// This is where the behaviour of the note is defined
-    /// The Key property holds information about which key
-    /// on the keyboard the note corrosponds to
-    /// </summary>
     public class Note : INote
     {
         private readonly InputSimulator _sim = new();

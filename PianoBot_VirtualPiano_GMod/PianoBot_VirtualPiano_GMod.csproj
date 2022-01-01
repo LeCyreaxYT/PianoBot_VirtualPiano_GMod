@@ -54,14 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Delay.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerCustomDelayException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerCustomNoteException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerInvalidMultiNoteException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerLoadFailedException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerMultiNoteNotDefinedException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerNoteCreationFailedException.cs" />
-    <Compile Include="Core\Exceptions\AutoplayerTargetNotFoundException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerCustomDelayException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerCustomNoteException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerInvalidMultiNoteException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerLoadFailedException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerMultiNoteNotDefinedException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerNoteCreationFailedException.cs" />
+    <Compile Include="Core\Exceptions\AutoPlayerTargetNotFoundException.cs" />
     <Compile Include="Core\Interfaces\INote.cs" />
     <Compile Include="Core\Notes\DelayNote.cs" />
     <Compile Include="Core\Notes\SpeedChangeNote.cs" />

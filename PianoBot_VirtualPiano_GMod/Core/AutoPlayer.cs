@@ -270,7 +270,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             else
             {
-                throw new AutoplayerCustomDelayException("Trying to add already existing delay");
+                throw new AutoPlayerCustomDelayException("Trying to add already existing delay");
             }
         }
 
@@ -285,7 +285,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             else
             {
-                throw new AutoplayerCustomDelayException("Trying to remove non-existent delay");
+                throw new AutoPlayerCustomDelayException("Trying to remove non-existent delay");
             }
         }
 
@@ -300,7 +300,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             else
             {
-                throw new AutoplayerCustomDelayException("Trying to modify non-existent delay");
+                throw new AutoPlayerCustomDelayException("Trying to modify non-existent delay");
             }
         }
 
@@ -346,7 +346,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             else
             {
-                throw new AutoplayerCustomNoteException("Trying to add already existing note");
+                throw new AutoPlayerCustomNoteException("Trying to add already existing note");
             }
         }
 
@@ -361,7 +361,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             else
             {
-                throw new AutoplayerCustomNoteException("Trying to remove non-existent note");
+                throw new AutoPlayerCustomNoteException("Trying to remove non-existent note");
             }
         }
 
@@ -377,7 +377,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             else
             {
-                throw new AutoplayerCustomNoteException("Trying to modify non-existent note");
+                throw new AutoPlayerCustomNoteException("Trying to modify non-existent note");
             }
         }
 
