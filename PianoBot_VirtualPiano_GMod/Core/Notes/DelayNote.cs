@@ -12,8 +12,8 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
     /// </summary>
     public class DelayNote : INote
     {
-        public char Character { get; private set; }
-        private int Time { get; set; }
+        public char Character { get; }
+        private int Time { get; }
 
         public DelayNote(char character, int delayTime)
         {

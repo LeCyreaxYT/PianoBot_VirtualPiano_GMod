@@ -13,11 +13,11 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
     /// </summary>
     public class Note : INote
     {
-        private readonly InputSimulator _sim = new InputSimulator();
+        private readonly InputSimulator _sim = new();
 
-        public VirtualKeyCode NoteToPlay { get; private set; }
+        public VirtualKeyCode NoteToPlay { get; }
         public char Character { get; }
-        public bool IsHighNote { get; private set; }
+        private bool IsHighNote { get; }
 
         public Note(char character, VirtualKeyCode note, bool isHighNote)
         {
@@ -28,11 +28,6 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
 
         public void Play()
         {
-            //This method is used until a better solution is found. This will NOT play black keys :(
-            //SendKeys.SendWait(Character.ToString());
-
-            //EXPERIMENTAL SOLUTION
-            //This method is a better solution as you can define a delay. However, this may result in unexpected behaviour should the program be terminated before KeyUp is run!
             if (IsHighNote)
             {
                 _sim.Keyboard.KeyDown(VirtualKeyCode.LSHIFT);
@@ -56,11 +51,6 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
         {
             _sim.Keyboard.KeyPress(VirtualKeyCode.LSHIFT);
             _sim.Keyboard.KeyUp(NoteToPlay);
-        }
-
-        public override string ToString()
-        {
-            return Character.ToString();
         }
 
         public override bool Equals(object obj)

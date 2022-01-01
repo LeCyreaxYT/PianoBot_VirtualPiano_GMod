@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using PianoBot_VirtualPiano_GMod.Core.Exceptions;
 using PianoBot_VirtualPiano_GMod.Core.Interfaces;
 using PianoBot_VirtualPiano_GMod.Core.Notes;
@@ -31,46 +30,23 @@ namespace PianoBot_VirtualPiano_GMod.Core
 
         #region Field and property declarations
 
-        //This can be accessed to get the version text
         public static string Version => "Version: 1.0";
 
-        //This will be used to define compatibility of save files between versions
         private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0"};
-
-
+        
         public static bool Pause { get; set; } = false;
         public static bool Loop { get; set; } = false;
-
         public static List<INote> Song { get; } = new();
         public static List<Delay> Delays { get; } = new();
         public static Dictionary<Note, Note> CustomNotes { get; } = new();
         private static readonly List<Note> MultiNoteBuffer = new();
-
         private static bool _buildingMultiNote = false;
         private const bool MultiNoteIsHighNote = false;
-        private static int _delayAtNormalSpeed = 100;
-
-        public static int DelayAtNormalSpeed
-        {
-            get => _delayAtNormalSpeed;
-            set => _delayAtNormalSpeed = value;
-        }
-
-        private static int _delayAtFastSpeed = 100;
-
-        private static int DelayAtFastSpeed
-        {
-            get => _delayAtFastSpeed;
-            set => _delayAtFastSpeed = value;
-        }
-
+        public static int DelayAtNormalSpeed { get; set; } = 100;
         public static List<Thread> SongThreads { get; } = new();
-
-
         private static Note? LastNote { get; set; }
 
 
-        //TESTING: This dictionary will serve as a virtual key lookup. So when a note is created, it will check the dictionary for the virtual keycode of the character
         public static Dictionary<char, VirtualKeyCode> VirtualDictionary { get; } = new()
         {
             #region Characters
@@ -513,7 +489,6 @@ namespace PianoBot_VirtualPiano_GMod.Core
             }
             sw.WriteLine("SPEEDS");
             sw.WriteLine(DelayAtNormalSpeed);
-            sw.WriteLine(DelayAtFastSpeed);
             sw.WriteLine("NOTES");
             sw.WriteLine(Song.Count);
             if (Song.Count != 0)
@@ -559,10 +534,10 @@ namespace PianoBot_VirtualPiano_GMod.Core
         {
             Song.Clear();
             bool errorWhileLoading = true;
-            StreamReader sr = new StreamReader(path);
+            StreamReader sr = new(path);
             string firstLine = sr.ReadLine() ?? string.Empty;
 
-            #region 2.1+ save format
+            #region 1.0+ save format
             if (SupportedVersionsSave.Contains(firstLine))
             {
                 if(sr.ReadLine() == "DELAYS")
@@ -611,9 +586,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
                 if(sr.ReadLine() == "SPEEDS")
                 {
                     int.TryParse(sr.ReadLine(), out var normalSpeed);
-                    int.TryParse(sr.ReadLine(), out var fastSpeed);
                     DelayAtNormalSpeed = normalSpeed;
-                    DelayAtFastSpeed = fastSpeed;
                 }
                 if (sr.ReadLine() == "NOTES")
                 {
@@ -622,95 +595,6 @@ namespace PianoBot_VirtualPiano_GMod.Core
                         AddNotesFromString(sr.ReadToEnd());
                     }
                     errorWhileLoading = false;
-                }
-            }
-            #endregion
-            #region 2.0 save format (for backwards compatibility)
-            switch (firstLine)
-            {
-                case "DELAYS":
-                {
-                    if (int.TryParse(sr.ReadLine(), out var delayCount) && delayCount > 0)
-                    {
-                        for (int i = 0; i < delayCount; i++)
-                        {
-                            if (!char.TryParse(sr.ReadLine(), out var delayChar)) continue;
-                            if (int.TryParse(sr.ReadLine(), out var delayTime))
-                            {
-                                Delays.Add(new Delay(delayChar, delayTime));
-                            }
-                        }
-                    }
-                    if (sr.ReadLine() == "NOTES")
-                    {
-                        if (int.TryParse(sr.ReadLine(), out var noteCount) && noteCount > 0)
-                        {
-                            AddNotesFromString(sr.ReadToEnd());
-                        }
-                        errorWhileLoading = false;
-                    }
-
-                    break;
-                }
-                case "CUSTOM DELAYS":
-                {
-                    if (int.TryParse(sr.ReadLine(), out var delayCount))
-                    {
-                        if (sr.ReadLine() == "NORMAL DELAY")
-                        {
-                            if (int.TryParse(sr.ReadLine(), out _delayAtNormalSpeed))
-                            {
-                                Delays.Add(new Delay(' ', DelayAtNormalSpeed));
-                                if (sr.ReadLine() == "FAST DELAY")
-                                {
-                                    if (int.TryParse(sr.ReadLine(), out _delayAtFastSpeed))
-                                    {
-                                        if (delayCount != 0)
-                                        {
-                                            for (int i = 0; i < delayCount; i++)
-                                            {
-                                                if (sr.ReadLine() != "CUSTOM DELAY INDEX") continue;
-                                                if (!int.TryParse(sr.ReadLine(), out _)) continue;
-                                                if (sr.ReadLine() != "CUSTOM DELAY CHARACTER") continue;
-                                                if (!char.TryParse(sr.ReadLine(), out var customDelayChar)) continue;
-                                                if (sr.ReadLine() != "CUSTOM DELAY TIME") continue;
-                                                if (int.TryParse(sr.ReadLine(), out var customDelayTime))
-                                                {
-                                                    Delays.Add(new Delay(customDelayChar, customDelayTime));
-                                                }
-                                            }
-                                        }
-                                        if (sr.ReadLine() == "NOTES")
-                                        {
-                                            AddNotesFromString(sr.ReadToEnd());
-                                            errorWhileLoading = false;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    break;
-                }
-                case "NORMAL DELAY":
-                {
-                    if (int.TryParse(sr.ReadLine(), out _delayAtNormalSpeed))
-                    {
-                        if (sr.ReadLine() == "FAST DELAY")
-                        {
-                            if (int.TryParse(sr.ReadLine(), out _delayAtFastSpeed))
-                            {
-                                if (sr.ReadLine() == "NOTES")
-                                {
-                                    AddNotesFromString(sr.ReadToEnd());
-                                    errorWhileLoading = false;
-                                }
-                            }
-                        }
-                    }
-
-                    break;
                 }
             }
             #endregion

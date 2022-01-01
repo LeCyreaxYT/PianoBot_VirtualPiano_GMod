@@ -10,7 +10,7 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
     /// </summary>
     public class SpeedChangeNote : INote
     {
-        public bool TurnOnFast { get; private set; }
+        public bool TurnOnFast { get; }
 
         public SpeedChangeNote(bool turnOnFast)
         {
