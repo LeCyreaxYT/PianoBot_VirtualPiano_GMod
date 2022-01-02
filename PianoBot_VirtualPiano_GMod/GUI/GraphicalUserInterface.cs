@@ -28,9 +28,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
 
         //This variable is used to ignore changes to the note box when loading a saved file
         bool isLoading = false;
-
-        public static Control control;
-
+        
         /// <summary>
         /// This is the constructor for the GUI
         /// It is called when the GUI starts

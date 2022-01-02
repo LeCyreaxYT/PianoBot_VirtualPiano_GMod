@@ -34,9 +34,9 @@ namespace PianoBot_VirtualPiano_GMod.Core
 
         #region Field and property declarations
 
-        public static string Version => "Version: 1.0";
+        public static string Version => "Version: 1.1";
 
-        private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0"};
+        private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0", "Version: 1.1"};
 
         public static bool Pause { get; set; } = false;
         public static bool Loop { get; set; } = false;
