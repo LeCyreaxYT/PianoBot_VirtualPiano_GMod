@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Windows.Forms;
 using PianoBot_VirtualPiano_GMod.Core.Exceptions;
 using PianoBot_VirtualPiano_GMod.Core.Interfaces;
 using PianoBot_VirtualPiano_GMod.Core.Notes;
+using PianoBot_VirtualPiano_GMod.GUI;
 using WindowsInput.Native;
+using Timer = System.Windows.Forms.Timer;
 
 namespace PianoBot_VirtualPiano_GMod.Core
 {
@@ -25,7 +30,6 @@ namespace PianoBot_VirtualPiano_GMod.Core
         public static event AutoPlayerEvent? SongFinishedPlaying;
         public static event AutoPlayerEvent? SongWasStopped;
         public static event AutoPlayerExceptionEvent? SongWasInteruptedByException;
-
         #endregion
 
         #region Field and property declarations
@@ -33,7 +37,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
         public static string Version => "Version: 1.0";
 
         private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0"};
-        
+
         public static bool Pause { get; set; } = false;
         public static bool Loop { get; set; } = false;
         public static List<INote> Song { get; } = new();
@@ -43,13 +47,17 @@ namespace PianoBot_VirtualPiano_GMod.Core
         private static bool _buildingMultiNote = false;
         private const bool MultiNoteIsHighNote = false;
         public static int DelayAtNormalSpeed { get; set; } = 100;
-        public static List<Thread> SongThreads { get; } = new();
+
+        public static Thread? SongThread { get; set; } = null;
+        public static Stopwatch Stopwatch { get; set; } = new();
+        public static Timer Timer { get; set; } = new();
         private static Note? LastNote { get; set; }
 
 
         public static Dictionary<char, VirtualKeyCode> VirtualDictionary { get; } = new()
         {
             #region Characters
+
             ['A'] = VirtualKeyCode.VK_A,
             ['B'] = VirtualKeyCode.VK_B,
             ['C'] = VirtualKeyCode.VK_C,
@@ -79,6 +87,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             ['|'] = VirtualKeyCode.OEM_PLUS,
 
             #endregion
+
             #region Numbers
 
             ['0'] = VirtualKeyCode.VK_0,
@@ -93,6 +102,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             ['9'] = VirtualKeyCode.VK_9,
 
             #endregion
+
             #region Symbols
 
             [' '] = VirtualKeyCode.OEM_MINUS,
@@ -456,8 +466,6 @@ namespace PianoBot_VirtualPiano_GMod.Core
 
             SongFinishedPlaying?.Invoke();
         }
-
-
 
         #region Save & Load
         /// <summary>

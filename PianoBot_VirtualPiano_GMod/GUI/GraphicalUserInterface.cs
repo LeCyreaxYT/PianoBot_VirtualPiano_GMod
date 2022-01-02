@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -7,6 +8,7 @@ using PianoBot_VirtualPiano_GMod.Core.Exceptions;
 using PianoBot_VirtualPiano_GMod.Core.Interfaces;
 using PianoBot_VirtualPiano_GMod.Core.Notes;
 using PianoBot_VirtualPiano_GMod.Imported;
+using Timer = System.Windows.Forms.Timer;
 
 namespace PianoBot_VirtualPiano_GMod.GUI
 {
@@ -27,6 +29,8 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         //This variable is used to ignore changes to the note box when loading a saved file
         bool isLoading = false;
 
+        public static Control control;
+
         /// <summary>
         /// This is the constructor for the GUI
         /// It is called when the GUI starts
@@ -44,7 +48,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             AutoPlayer.SongWasStopped += EnablePlayButton;
             AutoPlayer.SongWasStopped += SongStopped;
             AutoPlayer.SongWasInteruptedByException += ExceptionHandler;
-
+            
             //Subscribe the method "GKS_KeyDown" to the KeyDown event of the GlobalKeyboardHook
             gkh.KeyDown += GKS_KeyDown;
 
@@ -110,7 +114,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         /// This method updates the CustomNotesListBox with all notes from the CustomNotes list in the main program
         /// Each custom note has its own line
         /// </summary>
-        public void UpdateCustomNoteListBox()
+        private void UpdateCustomNoteListBox()
         {
             CustomNoteListBox.Clear();
             foreach (Note note in AutoPlayer.CustomNotes.Keys)
@@ -333,8 +337,8 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 bool isOldHighNote = char.IsUpper(character) || AutoPlayer.AlwaysHighNotes.Contains(character);
                 bool isNewHighNote = char.IsUpper(newCharacter) || AutoPlayer.AlwaysHighNotes.Contains(newCharacter);
 
-                Note note = new Note(character, vkOld, isOldHighNote);
-                Note newNote = new Note(newCharacter, vkNew, isNewHighNote);
+                Note note = new(character, vkOld, isOldHighNote);
+                Note newNote = new(newCharacter, vkNew, isNewHighNote);
 
                 if (AutoPlayer.CheckNoteExists(note))
                 {
@@ -386,7 +390,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 //This will check if the note is an uppercase letter, or if the note is in the list of high notes
                 bool isHighNote = char.IsUpper(character) || AutoPlayer.AlwaysHighNotes.Contains(character);
 
-                Note note = new Note(character, vk, isHighNote);
+                Note note = new(character, vk, isHighNote);
 
                 //Remove the note from the dictonary
                 AutoPlayer.RemoveNote(note);
@@ -413,7 +417,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             //Update the GUI
             UpdateCustomNoteListBox();
 
-            //Update the current notes wtih the new rules
+            //Update the current notes with the new rules
             MakeSong();
         }
 
@@ -429,6 +433,37 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             UpdateNoteBox();
         }
 
+        private void StartTimeCounter()
+        {
+            // Start a Timer and update every second a label
+            AutoPlayer.Timer = new Timer();
+            AutoPlayer.Timer.Interval = 250;
+            AutoPlayer.Timer.Tick += (_, _) =>
+            {
+                // Update the label text
+                UpdateStopwatchCounter();
+            };
+            AutoPlayer.Timer.Start();
+            
+            //Start the Stopwatch
+            AutoPlayer.Stopwatch.Start();
+        }
+
+        private void StopTimeCounter()
+        {
+            //Stop the Timer
+            AutoPlayer.Timer.Stop();
+
+            //Stop the Stopwatch
+            AutoPlayer.Stopwatch.Stop();
+            AutoPlayer.Stopwatch.Reset();
+        }
+
+        private void UpdateStopwatchCounter()
+        {
+            PlayedTimeCurrent.Text = AutoPlayer.Stopwatch.Elapsed.ToString(@"mm\:ss");
+        }
+        
         /// <summary>
         /// This is called when we click the PlayButton
         /// </summary>
@@ -439,8 +474,10 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             
             AutoPlayer.Pause = false;
 
-            AutoPlayer.SongThreads.Insert(0, new Thread(AutoPlayer.PlaySong));
-            AutoPlayer.SongThreads[0].Start();
+            AutoPlayer.SongThread = new Thread(AutoPlayer.PlaySong);
+            AutoPlayer.SongThread.Start();
+            
+            StartTimeCounter();
         }
 
         /// <summary>
@@ -448,24 +485,30 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         /// </summary>
         private void StopButton_Click(object sender, EventArgs e)
         {
+            if (AutoPlayer.SongThread == null) return;
             EnableClearButton();
             EnablePlayButton();
             
             AutoPlayer.Pause = false;
 
-            AutoPlayer.SongThreads.ForEach(x => x.Abort());
-            AutoPlayer.SongThreads.Clear();
+            AutoPlayer.SongThread.Abort();
+            AutoPlayer.SongThread = null;
+            
+            StopTimeCounter();
         }
 
         private void SongStopped()
         {
+            if (AutoPlayer.SongThread == null) return;
             EnableClearButton();
             EnablePlayButton();
             
             AutoPlayer.Pause = false;
 
-            AutoPlayer.SongThreads.ForEach(x => x.Abort());
-            AutoPlayer.SongThreads.Clear();
+            AutoPlayer.SongThread.Abort();
+            AutoPlayer.SongThread = null;
+            
+            StopTimeCounter();
         }
 
         /// <summary>
@@ -505,11 +548,9 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             //This sets the save dialog to filter on .txt files.
             fileDialog.Filter = "Text File | *.txt";
 
-            if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                AutoPlayer.SaveSong(fileDialog.FileName);
-                MessageBox.Show($"Notes saved at {fileDialog.FileName}");
-            }
+            if (fileDialog.ShowDialog() != DialogResult.OK) return;
+            AutoPlayer.SaveSong(fileDialog.FileName);
+            MessageBox.Show($"Notes saved at {fileDialog.FileName}");
         }
 
         /// <summary>
@@ -599,11 +640,6 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 MakeSong();
             }
 
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

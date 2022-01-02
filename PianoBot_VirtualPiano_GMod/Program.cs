@@ -14,6 +14,7 @@ namespace PianoBot_VirtualPiano_GMod
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
             Application.Run(new GraphicalUserInterface());
         }
     }

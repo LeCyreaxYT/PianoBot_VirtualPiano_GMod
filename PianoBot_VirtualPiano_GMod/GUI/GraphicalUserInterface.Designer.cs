@@ -31,6 +31,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.MainTabPage = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.PlayedTimeCurrent = new System.Windows.Forms.Label();
+            this.PlayedTimeLabel = new System.Windows.Forms.Label();
             this.PauseButton = new System.Windows.Forms.Button();
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.LoopCheckBox = new System.Windows.Forms.CheckBox();
@@ -109,6 +111,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.PlayedTimeCurrent);
+            this.groupBox1.Controls.Add(this.PlayedTimeLabel);
             this.groupBox1.Controls.Add(this.PauseButton);
             this.groupBox1.Controls.Add(this.ErrorLabel);
             this.groupBox1.Controls.Add(this.LoopCheckBox);
@@ -126,6 +130,34 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Notes";
+            // 
+            // PlayedTimeCurrent
+            // 
+            this.PlayedTimeCurrent.AutoSize = true;
+            this.PlayedTimeCurrent.Location = new System.Drawing.Point(531, 400);
+            this.PlayedTimeCurrent.Name = "PlayedTimeCurrent";
+            this.PlayedTimeCurrent.Size = new System.Drawing.Size(34, 13);
+            this.PlayedTimeCurrent.TabIndex = 11;
+            this.PlayedTimeCurrent.UseCompatibleTextRendering = true;
+            this.PlayedTimeCurrent.Text = "00:00";
+            // 
+            // PlayedTimeLabel
+            // 
+            this.PlayedTimeLabel.AutoSize = true;
+            this.PlayedTimeLabel.Location = new System.Drawing.Point(471, 401);
+            this.PlayedTimeLabel.Name = "PlayedTimeLabel";
+            this.PlayedTimeLabel.Size = new System.Drawing.Size(65, 13);
+            this.PlayedTimeLabel.TabIndex = 10;
+            this.PlayedTimeLabel.Text = "PlayedTime:";
+            // 
+            // PauseButton
+            // 
+            this.PauseButton.Location = new System.Drawing.Point(572, 105);
+            this.PauseButton.Name = "PauseButton";
+            this.PauseButton.Size = new System.Drawing.Size(75, 51);
+            this.PauseButton.TabIndex = 9;
+            this.PauseButton.Text = "Pause (F3)";
+            this.PauseButton.UseVisualStyleBackColor = true;
             // 
             // ErrorLabel
             // 
@@ -161,7 +193,7 @@
             // VersionLabel
             // 
             this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(578, 398);
+            this.VersionLabel.Location = new System.Drawing.Point(586, 401);
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(69, 13);
             this.VersionLabel.TabIndex = 5;
@@ -196,16 +228,6 @@
             this.StopButton.Text = "Stop (F4)";
             this.StopButton.UseVisualStyleBackColor = true;
             this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
-            // 
-            // PauseButton
-            // 
-            this.PauseButton.Location = new System.Drawing.Point(572, 105);
-            this.PauseButton.Name = "PauseButton";
-            this.PauseButton.Size = new System.Drawing.Size(75, 51);
-            this.PauseButton.TabIndex = 9;
-            this.PauseButton.Text = "Pause (F3)";
-            this.PauseButton.UseVisualStyleBackColor = true;
-            //this.StopButton.Click += new System.EventHandler(this.PauseButton_Click);
             // 
             // PlayButton
             // 
@@ -260,7 +282,6 @@
             this.label6.Size = new System.Drawing.Size(30, 13);
             this.label6.TabIndex = 11;
             this.label6.Text = "BPM";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // NormalDelayBox
             // 
@@ -572,6 +593,10 @@
             ((System.ComponentModel.ISupportInitialize) (this.CustomDelayTimeBox)).EndInit();
             this.ResumeLayout(false);
         }
+
+        public System.Windows.Forms.Label PlayedTimeCurrent;
+
+        private System.Windows.Forms.Label PlayedTimeLabel;
         
         private System.Windows.Forms.Button PauseButton;
         #endregion
