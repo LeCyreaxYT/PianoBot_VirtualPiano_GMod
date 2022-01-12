@@ -1,7 +1,6 @@
 ﻿using System.Threading;
-using PianoBot_VirtualPiano_GMod.Core.Interfaces;
 
-namespace PianoBot_VirtualPiano_GMod.Core.Notes
+namespace PianoBot_VirtualPiano_GMod.Core.Models.INote
 {
     /// <summary>
     /// This class defines a DelayNote
@@ -10,7 +9,7 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
     /// The reason for this is that a default delay is added after each note
     /// including a delay note
     /// </summary>
-    public class DelayNote : INote
+    public class DelayNote : Interfaces.INote
     {
         public char Character { get; }
         private int Time { get; }

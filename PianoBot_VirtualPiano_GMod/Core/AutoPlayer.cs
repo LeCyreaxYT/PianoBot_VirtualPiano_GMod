@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 using PianoBot_VirtualPiano_GMod.Core.Exceptions;
 using PianoBot_VirtualPiano_GMod.Core.Interfaces;
-using PianoBot_VirtualPiano_GMod.Core.Notes;
-using PianoBot_VirtualPiano_GMod.GUI;
+using PianoBot_VirtualPiano_GMod.Core.Models;
+using PianoBot_VirtualPiano_GMod.Core.Models.INote;
+using PianoBot_VirtualPiano_GMod.Imported;
 using WindowsInput.Native;
 using Timer = System.Windows.Forms.Timer;
 
@@ -34,24 +34,30 @@ namespace PianoBot_VirtualPiano_GMod.Core
 
         #region Field and property declarations
 
-        public static string Version => "Version: 1.1";
+        public static string Version => "Version: 1.2";
+        private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0", "Version: 1.1", "Version: 1.2"};
 
-        private static List<string> SupportedVersionsSave { get; } = new() {"Version: 1.0", "Version: 1.1"};
-
-        public static bool Pause { get; set; } = false;
-        public static bool Loop { get; set; } = false;
+        
+        public static bool Loop { get; set; }
         public static List<INote> Song { get; } = new();
         public static List<Delay> Delays { get; } = new();
-        public static Dictionary<Note, Note> CustomNotes { get; } = new();
-        private static readonly List<Note> MultiNoteBuffer = new();
-        private static bool _buildingMultiNote = false;
-        private const bool MultiNoteIsHighNote = false;
+        public static Dictionary<NormalNote, NormalNote> CustomNotes { get; } = new();
+        private static readonly List<NormalNote> MultiNoteBuffer = new();
+        private static bool _buildingMultiNote;
+        
+        
+        public static bool IsFastSpeed = false;
+        public static bool IsPaused = false;
+        
         public static int DelayAtNormalSpeed { get; set; } = 100;
+        public static int DelayAtFastSpeed { get; set; } = 150;
 
-        public static Thread? SongThread { get; set; } = null;
-        public static Stopwatch Stopwatch { get; set; } = new();
-        public static Timer Timer { get; set; } = new();
-        private static Note? LastNote { get; set; }
+        public static Thread? SongThread { get; set; }
+        public static Stopwatch Stopwatch { get; } = new();
+        public static Timer StopwatchTimer { get; set; } = new();
+        public static Timer PlayerTimer { get; set; } = new();
+        private static NormalNote? LastNote { get; set; }
+
 
 
         public static Dictionary<char, VirtualKeyCode> VirtualDictionary { get; } = new()
@@ -180,7 +186,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
                     throw new AutoplayerMultiNoteNotDefinedException("A multi note must have a start before the end!");
                 case ']':
                     _buildingMultiNote = false;
-                    Song.Add(new MultiNote(MultiNoteBuffer.ToArray(), MultiNoteIsHighNote));
+                    Song.Add(new MultiNote(MultiNoteBuffer.ToArray()));
                     MultiNoteBuffer.Clear();
                     break;
                 case '{' when _buildingMultiNote:
@@ -215,7 +221,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
                         if (note is '\n' or '\r')
                         {
                             if (LastNote is {NoteToPlay: VirtualKeyCode.OEM_PLUS}) return;
-                            Song.Add(new Note(note, VirtualKeyCode.OEM_MINUS, false));
+                            Song.Add(new NormalNote(note, VirtualKeyCode.OEM_MINUS, false));
                             return;
                         }
                         //If it didn't match any case, it must be a normal note
@@ -241,12 +247,12 @@ namespace PianoBot_VirtualPiano_GMod.Core
                         switch (_buildingMultiNote)
                         {
                             case true:
-                                MultiNoteBuffer.Add(new Note(note, vk, isHighNote));
-                                LastNote = new Note(note, vk, isHighNote);
+                                MultiNoteBuffer.Add(new NormalNote(note, vk, isHighNote));
+                                LastNote = new NormalNote(note, vk, isHighNote);
                                 break;
                             default:
-                                Song.Add(new Note(note, vk, isHighNote));
-                                LastNote = new Note(note, vk, isHighNote);
+                                Song.Add(new NormalNote(note, vk, isHighNote));
+                                LastNote = new NormalNote(note, vk, isHighNote);
                                 break;
                         }
                     }
@@ -330,29 +336,29 @@ namespace PianoBot_VirtualPiano_GMod.Core
         /// This method will check if a note exists in the list of custom notes
         /// If it does, it returns true, otherwise it returns false
         /// </summary>
-        public static bool CheckNoteExists(Note note)
+        public static bool CheckNoteExists(NormalNote normalNote)
         {
-            return CustomNotes.ContainsKey(note);
+            return CustomNotes.ContainsKey(normalNote);
         }
 
         /// <summary>
         /// This method will check if a note exists in the list of custom notes
         /// as well as the connection between the note and the new note of the pair
         /// </summary>
-        private static bool CheckNoteExists(Note note, Note newNote)
+        private static bool CheckNoteExists(NormalNote normalNote, NormalNote newNormalNote)
         {
-            CustomNotes.TryGetValue(note, out var checkNote);
-            return checkNote != null && Equals(checkNote, newNote);
+            CustomNotes.TryGetValue(normalNote, out var checkNote);
+            return checkNote != null && Equals(checkNote, newNormalNote);
         }
 
         /// <summary>
         /// This method will add a note to the list of custom notes
         /// </summary>
-        public static void AddNote(Note note, Note newNote)
+        public static void AddNote(NormalNote normalNote, NormalNote newNormalNote)
         {
-            if (!CheckNoteExists(note, newNote))
+            if (!CheckNoteExists(normalNote, newNormalNote))
             {
-                CustomNotes.Add(note, newNote);
+                CustomNotes.Add(normalNote, newNormalNote);
             }
             else
             {
@@ -363,11 +369,11 @@ namespace PianoBot_VirtualPiano_GMod.Core
         /// <summary>
         /// This method will remove a note from the list of custom notes
         /// </summary>
-        public static void RemoveNote(Note note)
+        public static void RemoveNote(NormalNote normalNote)
         {
-            if (CheckNoteExists(note))
+            if (CheckNoteExists(normalNote))
             {
-                CustomNotes.Remove(note);
+                CustomNotes.Remove(normalNote);
             }
             else
             {
@@ -378,12 +384,12 @@ namespace PianoBot_VirtualPiano_GMod.Core
         /// <summary>
         /// This method will set a new note to the value of a specified note from the list of custom notes
         /// </summary>
-        public static void ChangeNote(Note note, Note newNote)
+        public static void ChangeNote(NormalNote normalNote, NormalNote newNormalNote)
         {
-            if (CheckNoteExists(note))
+            if (CheckNoteExists(normalNote))
             {
-                CustomNotes.Remove(note);
-                CustomNotes.Add(note, newNote);
+                CustomNotes.Remove(normalNote);
+                CustomNotes.Add(normalNote, newNormalNote);
             }
             else
             {
@@ -400,18 +406,19 @@ namespace PianoBot_VirtualPiano_GMod.Core
         }
 
         #endregion
-
-        /// <summary>
-        /// This method will play the notes in the song in sequence
-        /// </summary>
+        
+        public static void ChangeSpeed(bool changeToFast)
+        {
+            IsFastSpeed = changeToFast;
+        }
+        
         public static void PlaySong()
         {
-
             foreach (INote note in Song)
             {
                 try
                 {
-                    if (note is Note note1)
+                    if (note is NormalNote note1)
                     {
                         if (CustomNotes.ContainsKey(note1))
                         {
@@ -423,8 +430,16 @@ namespace PianoBot_VirtualPiano_GMod.Core
                             switch (note1)
                             {
                                 case {NoteToPlay: VirtualKeyCode.OEM_PLUS}:
-                                    int miliseconds1 = (60000 / (DelayAtNormalSpeed * 2));
-                                    Thread.Sleep(miliseconds1);
+                                    if (IsFastSpeed)
+                                    {
+                                        int atFast = 60000 / (DelayAtFastSpeed * 2);
+                                        Thread.Sleep(atFast);
+                                    }
+                                    else
+                                    {
+                                        int atNormal = 60000 / (DelayAtNormalSpeed * 2);
+                                        Thread.Sleep(atNormal);
+                                    }
                                     continue;
                                 case {NoteToPlay: VirtualKeyCode.OEM_MINUS}:
                                     continue;
@@ -439,12 +454,18 @@ namespace PianoBot_VirtualPiano_GMod.Core
                         note.Play();
                     }
 
+                    if (note is not NormalNote && note is not MultiNote) continue;
 
-                    if (note is not Note && note is not MultiNote) continue;
-
-                    //Rechte die BPM 1/6 zu Milisekunden umrechnen
-                    int miliseconds = (60000 / (DelayAtNormalSpeed * 2));
-                    Thread.Sleep(miliseconds);
+                    if (IsFastSpeed)
+                    {
+                        int atFast = 60000 / (DelayAtFastSpeed * 2);
+                        Thread.Sleep(atFast);
+                    }
+                    else
+                    {
+                        int atNormal = 60000 / (DelayAtNormalSpeed * 2);
+                        Thread.Sleep(atNormal);
+                    }
                 }
                 catch (AutoplayerTargetNotFoundException error)
                 {
@@ -489,7 +510,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
             sw.WriteLine(CustomNotes.Count);
             if (CustomNotes.Count != 0)
             {
-                foreach (KeyValuePair<Note, Note> note in CustomNotes)
+                foreach (KeyValuePair<NormalNote, NormalNote> note in CustomNotes)
                 {
                     sw.WriteLine(note.Value.Character);
                     sw.WriteLine(note.Key.Character);
@@ -511,16 +532,16 @@ namespace PianoBot_VirtualPiano_GMod.Core
                         case SpeedChangeNote {TurnOnFast: true}:
                             sw.Write("{");
                             break;
-                        case SpeedChangeNote _:
+                        case SpeedChangeNote {TurnOnFast: false}:
                             sw.Write("}");
                             break;
-                        case Note note1:
+                        case NormalNote note1:
                             sw.Write(note1.Character);
                             break;
                         case MultiNote note1:
                         {
                             sw.Write("[");
-                            foreach (Note multiNote in note1.Notes)
+                            foreach (NormalNote multiNote in note1.Notes)
                             {
                                 sw.Write(multiNote.Character);
                             }
@@ -587,7 +608,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
                                 return;
                             }
 
-                            CustomNotes.Add(new Note(origNoteChar, vkOld, char.IsUpper(origNoteChar)), new Note(replaceNoteChar, vkNew, char.IsUpper(replaceNoteChar)));
+                            CustomNotes.Add(new NormalNote(origNoteChar, vkOld, char.IsUpper(origNoteChar)), new NormalNote(replaceNoteChar, vkNew, char.IsUpper(replaceNoteChar)));
                         }
                     }
                 }

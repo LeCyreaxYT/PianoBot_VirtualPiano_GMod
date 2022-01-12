@@ -153,6 +153,7 @@ namespace PianoBot_VirtualPiano_GMod.Imported {
 		/// <returns>A handle to the library</returns>
 		[DllImport("kernel32.dll")]
 		static extern IntPtr LoadLibrary(string lpFileName);
+		
 		#endregion
 	}
 }

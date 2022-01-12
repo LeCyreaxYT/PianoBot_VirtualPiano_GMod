@@ -1,4 +1,6 @@
-﻿namespace PianoBot_VirtualPiano_GMod.Core.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace PianoBot_VirtualPiano_GMod.Core.Interfaces
 {
     /// <summary>
     /// This interface is a set of rules that all notes has to follow

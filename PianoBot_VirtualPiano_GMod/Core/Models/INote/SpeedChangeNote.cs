@@ -1,6 +1,4 @@
-﻿using PianoBot_VirtualPiano_GMod.Core.Interfaces;
-
-namespace PianoBot_VirtualPiano_GMod.Core.Notes
+﻿namespace PianoBot_VirtualPiano_GMod.Core.Models.INote
 {
     /// <summary>
     /// This class defines a SpeedChangeNote which is a note
@@ -8,7 +6,7 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
     /// It needs a boolean value to define wheather or not to turn on
     /// the faster speed
     /// </summary>
-    public class SpeedChangeNote : INote
+    public class SpeedChangeNote : Interfaces.INote
     {
         public bool TurnOnFast { get; }
 
@@ -19,7 +17,7 @@ namespace PianoBot_VirtualPiano_GMod.Core.Notes
 
         public void Play()
         {
-            //AutoPlayer.ChangeSpeed(TurnOnFast);
+            AutoPlayer.ChangeSpeed(TurnOnFast);
         }
     }
 }

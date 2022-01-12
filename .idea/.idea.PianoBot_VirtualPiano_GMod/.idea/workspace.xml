@@ -8,10 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f97330a6-3150-4216-afe0-35f34f4daf40" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/AutoPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/AutoPlayer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.PianoBot_VirtualPiano_GMod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PianoBot_VirtualPiano_GMod/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +19,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c665564ae3b14cb0a7dc8ff61d357a9f5a4f20/f1/c93671cf/SendKeys.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="ProjectId" id="233ZXcPVOCRuaWt0nrQ8GPVl5Pq" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -29,6 +30,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.34994584" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -36,7 +39,7 @@
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.smartKeys_rider" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
@@ -72,6 +75,14 @@
       <workItem from="1641058665080" duration="743000" />
       <workItem from="1641060705512" duration="1631000" />
       <workItem from="1641152879557" duration="8587000" />
+      <workItem from="1641220801682" duration="2890000" />
+      <workItem from="1641332026540" duration="295000" />
+      <workItem from="1641752663226" duration="5819000" />
+      <workItem from="1641827603895" duration="2987000" />
+      <workItem from="1641830665615" duration="2590000" />
+      <workItem from="1641912287824" duration="2564000" />
+      <workItem from="1641914906724" duration="6562000" />
+      <workItem from="1642005933495" duration="429000" />
     </task>
     <servers />
   </component>
