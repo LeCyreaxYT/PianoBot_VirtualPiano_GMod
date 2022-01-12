@@ -491,11 +491,11 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             EnableClearButton();
             EnablePlayButton();
             DisablePauseButton();
+            
+            StopTimeCounter();
 
             AutoPlayer.SongThread.Abort();
             AutoPlayer.SongThread = null;
-            
-            StopTimeCounter();
         }
         private void PauseButton_Click(object sender, EventArgs e)
         {
@@ -520,11 +520,11 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             if (AutoPlayer.SongThread == null) return;
             EnableClearButton();
             EnablePlayButton();
-
+            DisablePauseButton();
+            StopTimeCounter();
+            
             AutoPlayer.SongThread.Abort();
             AutoPlayer.SongThread = null;
-            
-            StopTimeCounter();
         }
 
         /// <summary>

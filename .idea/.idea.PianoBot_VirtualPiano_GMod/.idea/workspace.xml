@@ -8,24 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f97330a6-3150-4216-afe0-35f34f4daf40" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/MultiNote.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/NormalNote.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/app.manifest" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PianoBot_VirtualPiano_GMod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PianoBot_VirtualPiano_GMod/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/App.config" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/App.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/AutoPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/AutoPlayer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Interfaces/INote.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Interfaces/INote.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Notes/DelayNote.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/DelayNote.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Notes/MultiNote.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Notes/Note.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Notes/SpeedChangeNote.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/SpeedChangeNote.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.Designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Imported/GlobalKeyboardHook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Imported/GlobalKeyboardHook.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/PianoBot_VirtualPiano_GMod.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/PianoBot_VirtualPiano_GMod.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Properties/AssemblyInfo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,6 +82,7 @@
       <workItem from="1641830665615" duration="2590000" />
       <workItem from="1641912287824" duration="2564000" />
       <workItem from="1641914906724" duration="6562000" />
+      <workItem from="1642005933495" duration="429000" />
     </task>
     <servers />
   </component>
