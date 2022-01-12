@@ -158,6 +158,7 @@
             this.PauseButton.TabIndex = 9;
             this.PauseButton.Text = "Pause (F3)";
             this.PauseButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.PauseButton_Click);
             // 
             // ErrorLabel
             // 

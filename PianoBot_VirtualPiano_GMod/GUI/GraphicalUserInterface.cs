@@ -1,12 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PianoBot_VirtualPiano_GMod.Core;
 using PianoBot_VirtualPiano_GMod.Core.Exceptions;
 using PianoBot_VirtualPiano_GMod.Core.Interfaces;
-using PianoBot_VirtualPiano_GMod.Core.Notes;
+using PianoBot_VirtualPiano_GMod.Core.Models;
+using PianoBot_VirtualPiano_GMod.Core.Models.INote;
 using PianoBot_VirtualPiano_GMod.Imported;
 using Timer = System.Windows.Forms.Timer;
 
@@ -115,9 +116,9 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         private void UpdateCustomNoteListBox()
         {
             CustomNoteListBox.Clear();
-            foreach (Note note in AutoPlayer.CustomNotes.Keys)
+            foreach (NormalNote note in AutoPlayer.CustomNotes.Keys)
             {
-                AutoPlayer.CustomNotes.TryGetValue(note, out Note newNote);
+                AutoPlayer.CustomNotes.TryGetValue(note, out NormalNote newNote);
                 CustomNoteListBox.Text += $"Changed from '{note}' to '{newNote}'\n";
             }
         }
@@ -141,13 +142,13 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                     case SpeedChangeNote _:
                         NoteTextBox.Text += "}";
                         break;
-                    case Note note1:
+                    case NormalNote note1:
                         NoteTextBox.Text += note1.Character;
                         break;
                     case MultiNote note1:
                     {
                         NoteTextBox.Text += "[";
-                        foreach (Note multiNote in note1.Notes)
+                        foreach (NormalNote multiNote in note1.Notes)
                         {
                             NoteTextBox.Text += multiNote.Character;
                         }
@@ -178,33 +179,22 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             }
         }
 
-        /// <summary>
-        /// This method disables the play button so the user cannot press it
-        /// </summary>
+
         private void DisablePlayButton()
         {
             PlayButton.Enabled = false;
         }
 
-        /// <summary>
-        /// This method enables the play button and makes it interactable
-        /// </summary>
         private void EnablePlayButton()
         {
             PlayButton.Enabled = true;
         }
-
-        /// <summary>
-        /// This method disables the clear button so the user cannot press it
-        /// </summary>
+        
         private void DisableClearButton()
         {
             ClearNotesButton.Enabled = false;
         }
 
-        /// <summary>
-        /// This method enables the clear button and makes it interactable
-        /// </summary>
         private void EnableClearButton()
         {
             if (ClearNotesButton.InvokeRequired)
@@ -221,6 +211,18 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 ClearNotesButton.Enabled = true;
             }
         }
+        
+        private void DisablePauseButton()
+        {
+            PauseButton.Enabled = false;
+        }
+
+        private void EnablePauseButton()
+        {
+            PauseButton.Enabled = true;
+        }
+        
+        
 
         /// <summary>
         /// This method will handle exceptions thrown from other threads than the current one
@@ -335,18 +337,18 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 bool isOldHighNote = char.IsUpper(character) || AutoPlayer.AlwaysHighNotes.Contains(character);
                 bool isNewHighNote = char.IsUpper(newCharacter) || AutoPlayer.AlwaysHighNotes.Contains(newCharacter);
 
-                Note note = new(character, vkOld, isOldHighNote);
-                Note newNote = new(newCharacter, vkNew, isNewHighNote);
+                NormalNote normalNote = new(character, vkOld, isOldHighNote);
+                NormalNote newNormalNote = new(newCharacter, vkNew, isNewHighNote);
 
-                if (AutoPlayer.CheckNoteExists(note))
+                if (AutoPlayer.CheckNoteExists(normalNote))
                 {
                     //If the note already exists, just update it
-                    AutoPlayer.ChangeNote(note, newNote);
+                    AutoPlayer.ChangeNote(normalNote, newNormalNote);
                 }
                 else
                 {
                     //If the note does not exist, add a new entry
-                    AutoPlayer.AddNote(note, newNote);
+                    AutoPlayer.AddNote(normalNote, newNormalNote);
                 }
 
                 //Update the GUI element to show the delays in the GUI
@@ -388,10 +390,10 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 //This will check if the note is an uppercase letter, or if the note is in the list of high notes
                 bool isHighNote = char.IsUpper(character) || AutoPlayer.AlwaysHighNotes.Contains(character);
 
-                Note note = new(character, vk, isHighNote);
+                NormalNote normalNote = new(character, vk, isHighNote);
 
                 //Remove the note from the dictonary
-                AutoPlayer.RemoveNote(note);
+                AutoPlayer.RemoveNote(normalNote);
                 //Update the GUI
                 UpdateCustomNoteListBox();
 
@@ -434,14 +436,14 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         private void StartTimeCounter()
         {
             // Start a Timer and update every second a label
-            AutoPlayer.Timer = new Timer();
-            AutoPlayer.Timer.Interval = 250;
-            AutoPlayer.Timer.Tick += (_, _) =>
+            AutoPlayer.StopwatchTimer = new Timer();
+            AutoPlayer.StopwatchTimer.Interval = 250;
+            AutoPlayer.StopwatchTimer.Tick += (_, _) =>
             {
                 // Update the label text
                 UpdateStopwatchCounter();
             };
-            AutoPlayer.Timer.Start();
+            AutoPlayer.StopwatchTimer.Start();
             
             //Start the Stopwatch
             AutoPlayer.Stopwatch.Start();
@@ -450,7 +452,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         private void StopTimeCounter()
         {
             //Stop the Timer
-            AutoPlayer.Timer.Stop();
+            AutoPlayer.StopwatchTimer.Stop();
 
             //Stop the Stopwatch
             AutoPlayer.Stopwatch.Stop();
@@ -469,10 +471,12 @@ namespace PianoBot_VirtualPiano_GMod.GUI
         {
             DisableClearButton();
             DisablePlayButton();
-            
-            AutoPlayer.Pause = false;
+            EnablePlayButton();
 
-            AutoPlayer.SongThread = new Thread(AutoPlayer.PlaySong);
+            AutoPlayer.SongThread = new Thread(o =>
+            {
+                AutoPlayer.PlaySong();
+            });
             AutoPlayer.SongThread.Start();
             
             StartTimeCounter();
@@ -486,13 +490,29 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             if (AutoPlayer.SongThread == null) return;
             EnableClearButton();
             EnablePlayButton();
-            
-            AutoPlayer.Pause = false;
+            DisablePauseButton();
 
             AutoPlayer.SongThread.Abort();
             AutoPlayer.SongThread = null;
             
             StopTimeCounter();
+        }
+        private void PauseButton_Click(object sender, EventArgs e)
+        {
+            if (AutoPlayer.SongThread == null) return;
+
+            if (AutoPlayer.IsPaused)
+            {
+                AutoPlayer.IsPaused = false;
+                AutoPlayer.Stopwatch.Start();
+            }
+            else
+            {
+                AutoPlayer.IsPaused = true;
+                AutoPlayer.Stopwatch.Stop();
+            }
+
+            AutoPlayer.IsPaused = !AutoPlayer.IsPaused;
         }
 
         private void SongStopped()
@@ -500,8 +520,6 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             if (AutoPlayer.SongThread == null) return;
             EnableClearButton();
             EnablePlayButton();
-            
-            AutoPlayer.Pause = false;
 
             AutoPlayer.SongThread.Abort();
             AutoPlayer.SongThread = null;
