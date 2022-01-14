@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using PianoBot_VirtualPiano_GMod.Core.Exceptions;
 using PianoBot_VirtualPiano_GMod.Core.Interfaces;
-using PianoBot_VirtualPiano_GMod.Core.Models;
 using PianoBot_VirtualPiano_GMod.Core.Models.INote;
-using PianoBot_VirtualPiano_GMod.Imported;
-using WindowsInput.Native;
+using WindowsInput.Events;
 using Timer = System.Windows.Forms.Timer;
 
 namespace PianoBot_VirtualPiano_GMod.Core
@@ -60,65 +60,65 @@ namespace PianoBot_VirtualPiano_GMod.Core
 
 
 
-        public static Dictionary<char, VirtualKeyCode> VirtualDictionary { get; } = new()
+        public static Dictionary<char, KeyCode> VirtualDictionary { get; } = new()
         {
             #region Characters
 
-            ['A'] = VirtualKeyCode.VK_A,
-            ['B'] = VirtualKeyCode.VK_B,
-            ['C'] = VirtualKeyCode.VK_C,
-            ['D'] = VirtualKeyCode.VK_D,
-            ['E'] = VirtualKeyCode.VK_E,
-            ['F'] = VirtualKeyCode.VK_F,
-            ['G'] = VirtualKeyCode.VK_G,
-            ['H'] = VirtualKeyCode.VK_H,
-            ['I'] = VirtualKeyCode.VK_I,
-            ['J'] = VirtualKeyCode.VK_J,
-            ['K'] = VirtualKeyCode.VK_K,
-            ['L'] = VirtualKeyCode.VK_L,
-            ['M'] = VirtualKeyCode.VK_M,
-            ['N'] = VirtualKeyCode.VK_N,
-            ['O'] = VirtualKeyCode.VK_O,
-            ['P'] = VirtualKeyCode.VK_P,
-            ['Q'] = VirtualKeyCode.VK_Q,
-            ['R'] = VirtualKeyCode.VK_R,
-            ['S'] = VirtualKeyCode.VK_S,
-            ['T'] = VirtualKeyCode.VK_T,
-            ['U'] = VirtualKeyCode.VK_U,
-            ['V'] = VirtualKeyCode.VK_V,
-            ['W'] = VirtualKeyCode.VK_W,
-            ['X'] = VirtualKeyCode.VK_X,
-            ['Y'] = VirtualKeyCode.VK_Y,
-            ['Z'] = VirtualKeyCode.VK_Z,
-            ['|'] = VirtualKeyCode.OEM_PLUS,
+            ['A'] = KeyCode.A,
+            ['B'] = KeyCode.B,
+            ['C'] = KeyCode.C,
+            ['D'] = KeyCode.D,
+            ['E'] = KeyCode.E,
+            ['F'] = KeyCode.F,
+            ['G'] = KeyCode.G,
+            ['H'] = KeyCode.H,
+            ['I'] = KeyCode.I,
+            ['J'] = KeyCode.J,
+            ['K'] = KeyCode.K,
+            ['L'] = KeyCode.L,
+            ['M'] = KeyCode.M,
+            ['N'] = KeyCode.N,
+            ['O'] = KeyCode.O,
+            ['P'] = KeyCode.P,
+            ['Q'] = KeyCode.Q,
+            ['R'] = KeyCode.R,
+            ['S'] = KeyCode.S,
+            ['T'] = KeyCode.T,
+            ['U'] = KeyCode.U,
+            ['V'] = KeyCode.V,
+            ['W'] = KeyCode.W,
+            ['X'] = KeyCode.X,
+            ['Y'] = KeyCode.Y,
+            ['Z'] = KeyCode.Z,
+            ['|'] = KeyCode.Oemplus,
 
             #endregion
 
             #region Numbers
 
-            ['0'] = VirtualKeyCode.VK_0,
-            ['1'] = VirtualKeyCode.VK_1,
-            ['2'] = VirtualKeyCode.VK_2,
-            ['3'] = VirtualKeyCode.VK_3,
-            ['4'] = VirtualKeyCode.VK_4,
-            ['5'] = VirtualKeyCode.VK_5,
-            ['6'] = VirtualKeyCode.VK_6,
-            ['7'] = VirtualKeyCode.VK_7,
-            ['8'] = VirtualKeyCode.VK_8,
-            ['9'] = VirtualKeyCode.VK_9,
+            ['0'] = KeyCode.D0,
+            ['1'] = KeyCode.D1,
+            ['2'] = KeyCode.D2,
+            ['3'] = KeyCode.D3,
+            ['4'] = KeyCode.D4,
+            ['5'] = KeyCode.D5,
+            ['6'] = KeyCode.D6,
+            ['7'] = KeyCode.D7,
+            ['8'] = KeyCode.D8,
+            ['9'] = KeyCode.D9,
 
             #endregion
 
             #region Symbols
 
-            [' '] = VirtualKeyCode.OEM_MINUS,
-            ['!'] = VirtualKeyCode.VK_1,
-            ['@'] = VirtualKeyCode.VK_2,
-            ['$'] = VirtualKeyCode.VK_4,
-            ['%'] = VirtualKeyCode.VK_5,
-            ['^'] = VirtualKeyCode.VK_6,
-            ['*'] = VirtualKeyCode.VK_8,
-            ['('] = VirtualKeyCode.VK_9,
+            [' '] = KeyCode.OemMinus,
+            ['!'] = KeyCode.Oem1,
+            ['@'] = KeyCode.Oem2,
+            ['$'] = KeyCode.Oem4,
+            ['%'] = KeyCode.Oem5,
+            ['^'] = KeyCode.Oem6,
+            ['*'] = KeyCode.Oem8,
+            ['('] = KeyCode.Oem102,
 
             #endregion
         };
@@ -148,28 +148,32 @@ namespace PianoBot_VirtualPiano_GMod.Core
             Song.Clear();
             NotesCleared?.Invoke();
         }
-
-        /// <summary>
-        /// This method will take a string of notes and break it down into single notes
-        /// and send them to the AddNoteFromChar method to process them
-        /// </summary>
-        public static void AddNotesFromString(string rawNotes)
+        
+        public static void AddNotesFromString(string? rawNotes)
         {
+            Console.WriteLine("Adding notes from string...");
+            Stopwatch sw = new();
+            sw.Start();
+            
             _buildingMultiNote = false;
-            foreach (char note in rawNotes)
+
+            foreach (var note in rawNotes!)
             {
                 AddNoteFromChar(note);
             }
 
             AddingNoteFinished?.Invoke();
+            
+            sw.Stop();
+            Console.WriteLine($"Finished adding notes from string in {sw.ElapsedMilliseconds}ms");
         }
-
-
-        /// <summary>
-        /// This method will process a given character and add a corrosponding note to the song
-        /// </summary>
+        
         private static void AddNoteFromChar(char note)
         {
+            Console.WriteLine("Adding note from char...");
+            Stopwatch sw = new();
+            sw.Start();
+            
             Delay delay = Delays.Find(x => x.Character == note);
 
             switch (note)
@@ -220,13 +224,13 @@ namespace PianoBot_VirtualPiano_GMod.Core
                     {
                         if (note is '\n' or '\r')
                         {
-                            if (LastNote is {NoteToPlay: VirtualKeyCode.OEM_PLUS}) return;
-                            Song.Add(new NormalNote(note, VirtualKeyCode.OEM_MINUS, false));
+                            if (LastNote is {NoteToPlay: KeyCode.Oemplus}) return;
+                            Song.Add(new NormalNote(note, KeyCode.OemMinus, false));
                             return;
                         }
                         //If it didn't match any case, it must be a normal note
 
-                        VirtualKeyCode vk;
+                        KeyCode vk;
                         try
                         {
                             VirtualDictionary.TryGetValue(char.ToUpper(note), out vk);
@@ -260,6 +264,9 @@ namespace PianoBot_VirtualPiano_GMod.Core
                     break;
                 }
             }
+            
+            sw.Stop();
+            Console.WriteLine("Added note in " + sw.ElapsedTicks + "ms");
         }
 
         #endregion
@@ -429,7 +436,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
                         {
                             switch (note1)
                             {
-                                case {NoteToPlay: VirtualKeyCode.OEM_PLUS}:
+                                case {NoteToPlay: KeyCode.Oemplus}:
                                     if (IsFastSpeed)
                                     {
                                         int atFast = 60000 / (DelayAtFastSpeed * 2);
@@ -441,7 +448,7 @@ namespace PianoBot_VirtualPiano_GMod.Core
                                         Thread.Sleep(atNormal);
                                     }
                                     continue;
-                                case {NoteToPlay: VirtualKeyCode.OEM_MINUS}:
+                                case {NoteToPlay: KeyCode.OemMinus}:
                                     continue;
                                 default:
                                     note.Play();
@@ -492,147 +499,233 @@ namespace PianoBot_VirtualPiano_GMod.Core
         /// <summary>
         /// This method will save the song and its settings to a file at the "path" variable's destination
         /// </summary>
-        public static void SaveSong(string path)
+        public static void SaveSong(string path, string ext)
         {
-            StreamWriter sw = new(path);
-            sw.WriteLine(Version);
-            sw.WriteLine("DELAYS");
-            sw.WriteLine(Delays.Count);
-            if (Delays.Count != 0)
+            switch (ext)
             {
-                foreach (Delay delay in Delays)
+                case ".txt":
                 {
-                    sw.WriteLine(delay.Character);
-                    sw.WriteLine(delay.Time);
-                }
-            }
-            sw.WriteLine("CUSTOM NOTES");
-            sw.WriteLine(CustomNotes.Count);
-            if (CustomNotes.Count != 0)
-            {
-                foreach (KeyValuePair<NormalNote, NormalNote> note in CustomNotes)
-                {
-                    sw.WriteLine(note.Value.Character);
-                    sw.WriteLine(note.Key.Character);
-                }
-            }
-            sw.WriteLine("SPEEDS");
-            sw.WriteLine(DelayAtNormalSpeed);
-            sw.WriteLine("NOTES");
-            sw.WriteLine(Song.Count);
-            if (Song.Count != 0)
-            {
-                foreach (INote note in Song)
-                {
-                    switch (note)
+                    StreamWriter sw = new(path);
+                    sw.WriteLine(Version);
+                    sw.WriteLine("DELAYS");
+                    sw.WriteLine(Delays.Count);
+                    if (Delays.Count != 0)
                     {
-                        case DelayNote delayNote:
-                            sw.Write(delayNote.Character);
-                            break;
-                        case SpeedChangeNote {TurnOnFast: true}:
-                            sw.Write("{");
-                            break;
-                        case SpeedChangeNote {TurnOnFast: false}:
-                            sw.Write("}");
-                            break;
-                        case NormalNote note1:
-                            sw.Write(note1.Character);
-                            break;
-                        case MultiNote note1:
+                        foreach (Delay delay in Delays)
                         {
-                            sw.Write("[");
-                            foreach (NormalNote multiNote in note1.Notes)
-                            {
-                                sw.Write(multiNote.Character);
-                            }
-                            sw.Write("]");
-                            break;
+                            sw.WriteLine(delay.Character);
+                            sw.WriteLine(delay.Time);
                         }
                     }
+                    sw.WriteLine("CUSTOM NOTES");
+                    sw.WriteLine(CustomNotes.Count);
+                    if (CustomNotes.Count != 0)
+                    {
+                        foreach (KeyValuePair<NormalNote, NormalNote> note in CustomNotes)
+                        {
+                            sw.WriteLine(note.Value.Character);
+                            sw.WriteLine(note.Key.Character);
+                        }
+                    }
+                    sw.WriteLine("SPEEDS");
+                    sw.WriteLine(DelayAtNormalSpeed);
+                    sw.WriteLine("NOTES");
+                    sw.WriteLine(Song.Count);
+                    if (Song.Count != 0)
+                    {
+                        foreach (INote note in Song)
+                        {
+                            switch (note)
+                            {
+                                case DelayNote delayNote:
+                                    sw.Write(delayNote.Character);
+                                    break;
+                                case SpeedChangeNote {TurnOnFast: true}:
+                                    sw.Write("{");
+                                    break;
+                                case SpeedChangeNote {TurnOnFast: false}:
+                                    sw.Write("}");
+                                    break;
+                                case NormalNote note1:
+                                    sw.Write(note1.Character);
+                                    break;
+                                case MultiNote note1:
+                                {
+                                    sw.Write("[");
+                                    foreach (NormalNote multiNote in note1.Notes)
+                                    {
+                                        sw.Write(multiNote.Character);
+                                    }
+                                    sw.Write("]");
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    sw.Dispose();
+                    sw.Close();
+                    break;
                 }
+                case ".json":
+                    string saveVersion = Version;
+                    int customDelay = DelayAtNormalSpeed;
+                    string notes = "";
+
+                    if (Song.Count != 0)
+                    {
+                        foreach (INote note in Song)
+                        {
+                            switch (note)
+                            {
+                                case DelayNote delayNote:
+                                    notes += delayNote.Character;
+                                    break;
+                                case SpeedChangeNote {TurnOnFast: true}:
+                                    notes += "{";
+                                    break;
+                                case SpeedChangeNote {TurnOnFast: false}:
+                                    notes += "}";
+                                    break;
+                                case NormalNote note1:
+                                    notes += note1.Character;
+                                    break;
+                                case MultiNote note1:
+                                {
+                                    notes += "[";
+                                    notes = note1.Notes.Aggregate(notes, (current, multiNote) => current + multiNote.Character);
+                                    notes += "]";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    SavingModel savingModel = new()
+                    {
+                        SaveVersion = saveVersion,
+                        CustomBpm = customDelay,
+                        NotesLength = notes.Length,
+                        Notes = notes
+                    };
+            
+                    string json = savingModel.GetSerailizedData();
+            
+                    File.WriteAllText(path, json);
+                    break;
             }
-            sw.Dispose();
-            sw.Close();
             SaveCompleted?.Invoke();
         }
         /// <summary>
         /// This method will load a song and its settings from a file at the "path" variable's destination
         /// This loading method handles all previous save formats for backwards compatibility
         /// </summary>
-        public static void LoadSong(string path)
+        public static void LoadSong(string path, string ext)
         {
             Song.Clear();
-            bool errorWhileLoading = true;
-            StreamReader sr = new(path);
-            string firstLine = sr.ReadLine() ?? string.Empty;
 
-            #region 1.0+ save format
-            if (SupportedVersionsSave.Contains(firstLine))
+            switch (ext)
             {
-                if(sr.ReadLine() == "DELAYS")
-                {
-                    if (int.TryParse(sr.ReadLine(), out var delayCount) && delayCount > 0)
-                    {
-                        for (int i = 0; i < delayCount; i++)
-                        {
-                            if (!char.TryParse(sr.ReadLine(), out var delayChar)) continue;
-                            if (int.TryParse(sr.ReadLine(), out var delayTime))
-                            {
-                                Delays.Add(new Delay(delayChar, delayTime));
-                            }
-                        }
-                    }
-                }
-                if(sr.ReadLine() == "CUSTOM NOTES")
-                {
-                    if (int.TryParse(sr.ReadLine(), out var noteCount) && noteCount > 0)
-                    {
-                        for (int i = 0; i < noteCount; i++)
-                        {
-                            if (!char.TryParse(sr.ReadLine(), out var origNoteChar)) continue;
-                            if (!char.TryParse(sr.ReadLine(), out var replaceNoteChar)) continue;
-                            VirtualKeyCode vkOld;
-                            VirtualKeyCode vkNew;
-                            try
-                            {
-                                VirtualDictionary.TryGetValue(origNoteChar, out vkOld);
-                                VirtualDictionary.TryGetValue(replaceNoteChar, out vkNew);
+                case ".txt":
+                    Console.WriteLine("Loading .txt file at " + path);
+                    Stopwatch sw = new();
+                    sw.Start();
 
-                                if (vkOld == 0 || vkNew == 0)
+                    bool errorWhileLoading = true;
+                    StreamReader sr = new(path);
+                    string firstLine = sr.ReadLine() ?? string.Empty;
+
+                    if (SupportedVersionsSave.Contains(firstLine))
+                    {
+                        if(sr.ReadLine() == "DELAYS")
+                        {
+                            if (int.TryParse(sr.ReadLine(), out var delayCount) && delayCount > 0)
+                            {
+                                for (int i = 0; i < delayCount; i++)
                                 {
-                                    return;
+                                    if (!char.TryParse(sr.ReadLine(), out var delayChar)) continue;
+                                    if (int.TryParse(sr.ReadLine(), out var delayTime))
+                                    {
+                                        Delays.Add(new Delay(delayChar, delayTime));
+                                    }
                                 }
                             }
-                            catch (ArgumentNullException)
+                        }
+                        if(sr.ReadLine() == "CUSTOM NOTES")
+                        {
+                            if (int.TryParse(sr.ReadLine(), out var noteCount) && noteCount > 0)
                             {
-                                return;
-                            }
+                                for (int i = 0; i < noteCount; i++)
+                                {
+                                    if (!char.TryParse(sr.ReadLine(), out var origNoteChar)) continue;
+                                    if (!char.TryParse(sr.ReadLine(), out var replaceNoteChar)) continue;
+                                    KeyCode vkOld;
+                                    KeyCode vkNew;
+                                    try
+                                    {
+                                        VirtualDictionary.TryGetValue(origNoteChar, out vkOld);
+                                        VirtualDictionary.TryGetValue(replaceNoteChar, out vkNew);
 
-                            CustomNotes.Add(new NormalNote(origNoteChar, vkOld, char.IsUpper(origNoteChar)), new NormalNote(replaceNoteChar, vkNew, char.IsUpper(replaceNoteChar)));
+                                        if (vkOld == 0 || vkNew == 0)
+                                        {
+                                            return;
+                                        }
+                                    }
+                                    catch (ArgumentNullException)
+                                    {
+                                        return;
+                                    }
+
+                                    CustomNotes.Add(new NormalNote(origNoteChar, vkOld, char.IsUpper(origNoteChar)), new NormalNote(replaceNoteChar, vkNew, char.IsUpper(replaceNoteChar)));
+                                }
+                            }
+                        }
+                        if(sr.ReadLine() == "SPEEDS")
+                        {
+                            int.TryParse(sr.ReadLine(), out var normalSpeed);
+                            DelayAtNormalSpeed = normalSpeed;
+                        }
+                        if (sr.ReadLine() == "NOTES")
+                        {
+                            if (int.TryParse(sr.ReadLine(), out var noteCount) && noteCount > 0)
+                            {
+                                AddNotesFromString(sr.ReadToEnd());
+                            }
+                            errorWhileLoading = false;
                         }
                     }
-                }
-                if(sr.ReadLine() == "SPEEDS")
-                {
-                    int.TryParse(sr.ReadLine(), out var normalSpeed);
-                    DelayAtNormalSpeed = normalSpeed;
-                }
-                if (sr.ReadLine() == "NOTES")
-                {
-                    if (int.TryParse(sr.ReadLine(), out var noteCount) && noteCount > 0)
+                    
+                    sr.Close();
+                    if (errorWhileLoading)
                     {
-                        AddNotesFromString(sr.ReadToEnd());
+                        LoadFailed?.Invoke();
+                        throw new AutoplayerLoadFailedException("No compatible save format was found!");
+                    } 
+                    
+                    sw.Stop();
+                    Console.WriteLine("Loaded in " + sw.ElapsedMilliseconds + "ms");
+                    break;
+                    
+                case ".json":
+                    string jsonstring = File.ReadAllText(path);
+                    SavingModel? model = JsonConvert.DeserializeObject<SavingModel>(jsonstring);
+                    if (model == null)
+                    {
+                        LoadFailed?.Invoke();
+                        throw new AutoplayerLoadFailedException("No compatible save format was found!");
                     }
-                    errorWhileLoading = false;
-                }
+                    else
+                    {
+                        DelayAtNormalSpeed = model.CustomBpm;
+                        
+                        if(model.NotesLength > 0)
+                        {
+                            AddNotesFromString(model.Notes);
+                        }
+                    }
+
+                    break;
             }
-            #endregion
-            sr.Close();
-            if (errorWhileLoading)
-            {
-                LoadFailed?.Invoke();
-                throw new AutoplayerLoadFailedException("No compatible save format was found!");
-            }
+            
             LoadCompleted?.Invoke();
         }
         #endregion

@@ -8,8 +8,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f97330a6-3150-4216-afe0-35f34f4daf40" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Interfaces/SavingModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PianoBot_VirtualPiano_GMod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PianoBot_VirtualPiano_GMod/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/AutoPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/AutoPlayer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/MultiNote.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/MultiNote.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/NormalNote.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/Models/INote/NormalNote.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/NativeMethods.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/Core/NativeMethods.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/GUI/GraphicalUserInterface.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/PianoBot_VirtualPiano_GMod.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/PianoBot_VirtualPiano_GMod.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/PianoBot_VirtualPiano_GMod/packages.config" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +26,17 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c665564ae3b14cb0a7dc8ff61d357a9f5a4f20/f1/c93671cf/SendKeys.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/04a279c8b9054cdca72522e894e067e11aa00/95/b87d21bf/KeyCode.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="233ZXcPVOCRuaWt0nrQ8GPVl5Pq" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -83,6 +99,8 @@
       <workItem from="1641912287824" duration="2564000" />
       <workItem from="1641914906724" duration="6562000" />
       <workItem from="1642005933495" duration="429000" />
+      <workItem from="1642082938340" duration="182000" />
+      <workItem from="1642083160639" duration="10903000" />
     </task>
     <servers />
   </component>

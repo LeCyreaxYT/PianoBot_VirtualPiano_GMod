@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using PianoBot_VirtualPiano_GMod.Core.Interfaces;
 using PianoBot_VirtualPiano_GMod.Core.Models;
 using PianoBot_VirtualPiano_GMod.Core.Models.INote;
 using PianoBot_VirtualPiano_GMod.Imported;
+using WindowsInput.Events;
 using Timer = System.Windows.Forms.Timer;
 
 namespace PianoBot_VirtualPiano_GMod.GUI
@@ -60,6 +62,8 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             gkh.HookedKeys.Add(startKey);
             gkh.HookedKeys.Add(stopKey);
             gkh.HookedKeys.Add(pauseKey);
+            
+            NativeMethods.AllocConsole();
         }
 
         /// <summary>
@@ -316,8 +320,8 @@ namespace PianoBot_VirtualPiano_GMod.GUI
                 char character = CustomNoteCharacterBox.Text.ToCharArray()[0];
                 char newCharacter = CustomNoteNewCharacterBox.Text.ToCharArray()[0];
 
-                WindowsInput.Native.VirtualKeyCode vkOld;
-                WindowsInput.Native.VirtualKeyCode vkNew;
+                KeyCode vkOld;
+                KeyCode vkNew;
                 try
                 {
                     AutoPlayer.VirtualDictionary.TryGetValue(character, out vkOld);
@@ -372,7 +376,7 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             {
                 char character = CustomNoteCharacterBox.Text.ToCharArray()[0];
 
-                WindowsInput.Native.VirtualKeyCode vk;
+                KeyCode vk;
                 try
                 {
                     AutoPlayer.VirtualDictionary.TryGetValue(character, out vk);
@@ -535,22 +539,22 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             OpenFileDialog fileDialog = new OpenFileDialog();
 
             //This sets the load dialog to filter on .txt files.
-            fileDialog.Filter = "Text File | *.txt";
+            fileDialog.Filter = @"Json files (*.json)|*.json|Text files (*.txt)|*.txt";
 
             if (fileDialog.ShowDialog() != DialogResult.OK) return;
             try
             {
                 isLoading = true;
                 AutoPlayer.ResetDelays();
-                AutoPlayer.LoadSong(fileDialog.FileName);
+                AutoPlayer.LoadSong(fileDialog.FileName, Path.GetExtension(fileDialog.FileName));
                 //Update everything when we are done loading
                 UpdateEverything();
-                MessageBox.Show("Loading completed");
+                MessageBox.Show(@"Loading completed");
             }
             catch (AutoplayerLoadFailedException error)
             {
                 isLoading = false;
-                MessageBox.Show($"Loading failed: {error.Message}");
+                MessageBox.Show($@"Loading failed: {error.Message}");
             }
         }
 
@@ -562,11 +566,11 @@ namespace PianoBot_VirtualPiano_GMod.GUI
             SaveFileDialog fileDialog = new SaveFileDialog();
 
             //This sets the save dialog to filter on .txt files.
-            fileDialog.Filter = "Text File | *.txt";
+            fileDialog.Filter = @"Json files (*.json)|*.json|Text files (*.txt)|*.txt";
 
             if (fileDialog.ShowDialog() != DialogResult.OK) return;
-            AutoPlayer.SaveSong(fileDialog.FileName);
-            MessageBox.Show($"Notes saved at {fileDialog.FileName}");
+            AutoPlayer.SaveSong(fileDialog.FileName, Path.GetExtension(fileDialog.FileName));
+            MessageBox.Show($@"Notes saved at {fileDialog.FileName}");
         }
 
         /// <summary>
